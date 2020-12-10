@@ -18,14 +18,22 @@ function reducer (state, {type, payload}) {
         activeBrowser: browsers.length
       }
     case 'UPDATE':
-      const newBrowsers = [...browsers];
-      newBrowsers[activeBrowser] = payload;
+      const updatedBrowsers = [...browsers];
+      updatedBrowsers[activeBrowser] = payload;
       return { 
-        ...state, browsers: newBrowsers
+        ...state, browsers: updatedBrowsers
       } 
     case 'CLOSE':
+      const oldBrowsers = [...browsers];
+      const newBrowsers = browsers.filter((el,i)=> i !== payload);      
+      const oldUrl = oldBrowsers[activeBrowser];      
+      const newActiveBrowser = activeBrowser > newBrowsers.length - 1
+      ? newBrowsers.length - 1 
+      : (activeBrowser > 0 ? newBrowsers.findIndex(el => el === oldUrl) : 0 )
       return { 
-        ...state, ...payload 
+        ...state,
+        browsers: newBrowsers,
+        activeBrowser : newActiveBrowser
       }  
     default:
       return state
@@ -37,6 +45,8 @@ export default function App() {
     browsers: [
       'https://chrome.google.com',
       'https://biryukov.netlify.app',
+      'https://codepen.io',
+      'https://scotch.io'
     ],
     activeBrowser: 0
   });
@@ -44,6 +54,7 @@ export default function App() {
   const chooseBrowser = (payload) => dispatch({type: 'CHOOSE', payload});
   const addBrowser = () => dispatch({type: 'ADD'});
   const updateBrowser = (payload) => dispatch({type: 'UPDATE', payload});
+  const closeBrowser = (payload) => dispatch({type: 'CLOSE', payload});
 
   const url = browsers[activeBrowser];  
   return (
@@ -53,6 +64,7 @@ export default function App() {
         active={activeBrowser}
         choose={chooseBrowser}
         add={addBrowser}
+        close={closeBrowser}
         />
 
         <AddressBar url={url} updateBrowser={updateBrowser}/>

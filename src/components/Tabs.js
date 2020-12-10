@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-export default function Tabs({browsers, active, choose, add}) {
+export default function Tabs({browsers, active, choose, add, close}) {
   return (
     <div className="tabs">
       {browsers.map((browser, index) => (
-      <Tab key={index} isActive={active === index}>
+      <Tab key={index} isActive={active === index} close={() => close(index)}>
         <button onClick={() => choose(index)}>{browser}</button>
       </Tab>
       )
@@ -18,7 +18,7 @@ export default function Tabs({browsers, active, choose, add}) {
   );
 }
 
-function Tab({ index, children, close, isActive }) {
+function Tab({ children, close, isActive }) {  
   const [highlightStyle, setHighlightStyle] = useState({
     left: 0,
   });
@@ -43,7 +43,7 @@ function Tab({ index, children, close, isActive }) {
       <div className="highlight" style={highlightStyle} />
       {children}
       {close && (
-        <button className="close-tab" onClick={() => close(index)}>
+        <button className="close-tab" onClick={close}>
           x
         </button>
       )}
